@@ -70,11 +70,10 @@ app.post("/posts", (req,res) => {
 
 //PATCH a post 
 app.patch("/posts/:id" ,(req,res) => {
-  console.log("HI")// TO BE DELETED
   const id = parseInt(req.params.id);
   const foundIndex = posts.findIndex((obj) => obj.id == id);
   const foundPost = posts.find((obj) => obj.id == id);
-  if (foundIndex>0) {
+  if (foundIndex>=0) {
     const editPost = {
       id: foundPost.id,
       title: req.body.title || foundPost.title,
