@@ -40,15 +40,71 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //Write your code here//
 
-//CHALLENGE 1: GET All posts
+//GET All posts
+app.get("/posts", (req,res) => {
+  res.json(posts);
+});
 
-//CHALLENGE 2: GET a specific post by id
+//GET a specific post by id
+app.get("/posts/:id", (req,res) => {
+  const id = parseInt(req.params.id);
+  const foundPost = posts.find((obj) => obj.id == id);
+  res.json(foundPost);
+});
 
-//CHALLENGE 3: POST a new post
+//POST a new post
+app.post("/posts", (req,res) => {
+  const currDate = new Date();
+  const newPost = {
+    id: posts.length+1,
+    title: req.body.title,
+    content: req.body.content,
+    author: req.body.author,
+    date: currDate.toDateString() +" at "+ currDate.getHours()+":"+ currDate.getMinutes()
+  };
 
-//CHALLENGE 4: PATCH a post when you just want to update one parameter
+  posts.push(newPost);
+  res.json(newPost);
 
-//CHALLENGE 5: DELETE a specific post by providing the post id.
+});
+
+//PATCH a post 
+app.patch("/posts/:id" ,(req,res) => {
+  console.log("HI")// TO BE DELETED
+  const id = parseInt(req.params.id);
+  const foundIndex = posts.findIndex((obj) => obj.id == id);
+  const foundPost = posts.find((obj) => obj.id == id);
+  if (foundIndex>0) {
+    const editPost = {
+      id: foundPost.id,
+      title: req.body.title || foundPost.title,
+      content: req.body.content || foundPost. content,
+      author: req.body.author || foundPost.author ,
+      date: foundPost.date
+    }
+    posts[foundIndex] = editPost;
+    res.json(editPost);
+
+  } else {
+    res
+       .status(404)
+      .json({error: `Post with id of ${id} does not exist. No posts edited`})
+  }
+});
+
+//DELETE a specific post by providing the post id.
+app.delete("/posts/:id", (req,res) => {
+  const id = parseInt(req.params.id);
+  const foundIndex = posts.findIndex((obj) => obj.id == id);
+  if (foundIndex>=0) {
+    posts.splice(foundIndex, 1);
+    res.sendStatus(200);
+  } else {
+    res
+      .status(404)
+      .json({error: `Post with id of ${id} does not exist. No posts deleted`})
+  }
+});
 
 app.listen(port, () => {
   console.log(`API is running at http://localhost:${port}`);
